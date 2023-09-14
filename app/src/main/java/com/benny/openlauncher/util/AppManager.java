@@ -7,13 +7,21 @@ import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Process;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.AppDeleteListener;
 import com.benny.openlauncher.interfaces.AppUpdateListener;
@@ -172,20 +180,23 @@ public class AppManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                 List<UserHandle> profiles = launcherApps.getProfiles();
+                UserHandle defaultUser = profiles.get(0);
                 for (UserHandle userHandle : profiles) {
                     List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
                     for (LauncherActivityInfo info : apps) {
                         List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
                         App app = new App(_packageManager, info, shortcutInfo);
                         app._userHandle = userHandle;
+                        modifyIconIfNeeded(defaultUser, app);
                         LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                         nonFilteredAppsTemp.add(app);
                     }
                 }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 UserManager userManager = (UserManager) _context.getSystemService(Context.USER_SERVICE);
                 // LauncherApps.getProfiles() is not available for API 25, so just get all associated user profile handlers
                 List<UserHandle> profiles = userManager.getUserProfiles();
+                UserHandle defaultUser = profiles.get(0);
                 LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                 for (UserHandle userHandle : profiles) {
                     List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
@@ -193,6 +204,7 @@ public class AppManager {
                         List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
                         App app = new App(_packageManager, info, shortcutInfo);
                         app._userHandle = userHandle;
+                        modifyIconIfNeeded(defaultUser, app);
                         LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                         nonFilteredAppsTemp.add(app);
                     }
@@ -247,6 +259,45 @@ public class AppManager {
             return null;
         }
 
+        /**
+         * Adds the users profile picture to the bottom right corner of the app icon,
+         * if the app.user is not defaultUser.
+         */
+        private void modifyIconIfNeeded(UserHandle defaultUser, App app) {
+            if(app._userHandle == defaultUser) return;
+
+            Drawable originalIcon = app._icon;
+            int originalHeight = originalIcon.getIntrinsicHeight();
+            int originalWidth = originalIcon.getIntrinsicWidth();
+
+            // Create a new Bitmap with the combined drawables
+            Bitmap combinedBitmap = Bitmap.createBitmap(originalWidth, originalHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(combinedBitmap);
+
+            // Draw the original icon onto the canvas
+            originalIcon.setBounds(0, 0, originalWidth, originalHeight);
+            originalIcon.draw(canvas);
+
+            // Calculate the size and position of the additional drawable
+            int additionalDrawableSize = (int) (0.4f * originalHeight); // 40% of the height
+            int additionalDrawablePadding = 5; // Adjust as needed
+            Drawable additionalDrawable = ContextCompat.getDrawable(_context, R.drawable.ic_person).mutate();
+            int additionalDrawableLeft = originalWidth - additionalDrawableSize - additionalDrawablePadding;
+            int additionalDrawableTop = originalHeight - additionalDrawableSize - additionalDrawablePadding;
+            additionalDrawable.setBounds(additionalDrawableLeft, additionalDrawableTop, originalWidth - additionalDrawablePadding, originalHeight - additionalDrawablePadding);
+
+            // Draw circle
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            canvas.drawCircle((additionalDrawableLeft + additionalDrawableLeft / 2) - additionalDrawablePadding * 2,
+                    (additionalDrawableTop + additionalDrawableTop / 2) - additionalDrawablePadding * 2,
+                    additionalDrawableSize / 1.8f, paint);
+
+            // Draw user icon
+            additionalDrawable.draw(canvas);
+            app._icon = new BitmapDrawable(_context.getResources(), combinedBitmap);
+        }
+
         @Override
         protected void onPostExecute(Object result) {
             _apps = appsTemp;
@@ -267,6 +318,7 @@ public class AppManager {
             super.onPostExecute(result);
         }
     }
+
 
     public static List<App> getRemovedApps(List<App> oldApps, List<App> newApps) {
         List<App> removed = new ArrayList<>();
