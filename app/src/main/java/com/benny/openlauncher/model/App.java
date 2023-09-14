@@ -18,6 +18,7 @@ public class App {
     public String _className;
     public UserHandle _userHandle;
     public List<ShortcutInfo> _shortcutInfo;
+    public boolean isOwnedByDefaultUser;
 
     public App(PackageManager pm, ResolveInfo info, List<ShortcutInfo> shortcutInfo) {
         _icon = info.loadIcon(pm);

@@ -180,6 +180,7 @@ public class AppManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                 List<UserHandle> profiles = launcherApps.getProfiles();
+                UserHandle currentUser = Process.myUserHandle();
                 UserHandle defaultUser = profiles.get(0);
                 for (UserHandle userHandle : profiles) {
                     List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
@@ -187,7 +188,8 @@ public class AppManager {
                         List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
                         App app = new App(_packageManager, info, shortcutInfo);
                         app._userHandle = userHandle;
-                        modifyIconIfNeeded(defaultUser, app);
+                        app.isOwnedByDefaultUser = userHandle == defaultUser;
+                        modifyIconIfNeeded(app);
                         LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                         nonFilteredAppsTemp.add(app);
                     }
@@ -196,6 +198,7 @@ public class AppManager {
                 UserManager userManager = (UserManager) _context.getSystemService(Context.USER_SERVICE);
                 // LauncherApps.getProfiles() is not available for API 25, so just get all associated user profile handlers
                 List<UserHandle> profiles = userManager.getUserProfiles();
+                UserHandle currentUser = Process.myUserHandle();
                 UserHandle defaultUser = profiles.get(0);
                 LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                 for (UserHandle userHandle : profiles) {
@@ -204,7 +207,8 @@ public class AppManager {
                         List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
                         App app = new App(_packageManager, info, shortcutInfo);
                         app._userHandle = userHandle;
-                        modifyIconIfNeeded(defaultUser, app);
+                        app.isOwnedByDefaultUser = userHandle == defaultUser;
+                        modifyIconIfNeeded(app);
                         LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                         nonFilteredAppsTemp.add(app);
                     }
@@ -263,8 +267,8 @@ public class AppManager {
          * Adds the users profile picture to the bottom right corner of the app icon,
          * if the app.user is not defaultUser.
          */
-        private void modifyIconIfNeeded(UserHandle defaultUser, App app) {
-            if(app._userHandle == defaultUser) return;
+        private void modifyIconIfNeeded(App app) {
+            if(app.isOwnedByDefaultUser) return;
 
             Drawable originalIcon = app._icon;
             int originalHeight = originalIcon.getIntrinsicHeight();

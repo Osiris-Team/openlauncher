@@ -3,6 +3,7 @@ package com.benny.openlauncher.util;
 import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC;
 import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST;
 import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED;
+import static android.support.v4.content.ContextCompat.getSystemService;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +20,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Process;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -160,8 +164,24 @@ public class Tool {
     }
 
     public static void startApp(Context context, App app, View view) {
-        HomeActivity launcher = HomeActivity.Companion.getLauncher();
-        launcher.onStartApp(context, app, view);
+        UserHandle currentUser = Process.myUserHandle();
+        if(app._userHandle == currentUser){
+            HomeActivity launcher = HomeActivity.Companion.getLauncher();
+            launcher.onStartApp(context, app, view);
+        }
+        else {
+            Toast.makeText(context, "Switch to "+ currentUser.toString(), Toast.LENGTH_LONG).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                // Prompt user to switch profile
+                UserManager userManager = (UserManager) getSystemService(context, UserManager.class);
+                userManager.requestQuietModeEnabled(false, app._userHandle);
+            }
+            else{
+                // Prompt user to switch profile by opening users in settings
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                context.startActivity(intent);
+            }
+        }
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
