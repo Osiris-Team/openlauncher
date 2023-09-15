@@ -8,6 +8,7 @@ import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.HideAppsActivity;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.activity.MoreInfoActivity;
+import com.benny.openlauncher.activity.UsersActivity;
 import com.benny.openlauncher.util.AppSettings;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -30,14 +31,22 @@ public class SettingsMasterFragment extends SettingsBaseFragment {
         HomeActivity homeActivity = HomeActivity._launcher;
         int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
-            case R.string.pref_key__cat_hide_apps:
+            case R.string.pref_key__cat_hide_apps: {
                 Intent intent = new Intent(getActivity(), HideAppsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 return true;
-            case R.string.pref_key__cat_about:
+            }
+            case R.string.pref_key__cat_users: {
+                Intent intent = new Intent(getActivity(), UsersActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                return true;
+            }
+            case R.string.pref_key__cat_about: {
                 startActivity(new Intent(getActivity(), MoreInfoActivity.class));
                 return true;
+            }
         }
 
         return false;

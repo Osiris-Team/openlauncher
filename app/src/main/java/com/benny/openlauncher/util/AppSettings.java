@@ -3,7 +3,11 @@ package com.benny.openlauncher.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.LauncherApps;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.support.v4.content.ContextCompat;
 
 import com.benny.openlauncher.AppObject;
@@ -16,9 +20,9 @@ import net.gsantner.opoc.preference.SharedPreferencesPropertyBackend;
 
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
+import java.util.Random;
 
 public class AppSettings extends SharedPreferencesPropertyBackend {
     public AppSettings(Context context) {
@@ -363,5 +367,88 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     public void setAppFirstLaunch(boolean value) {
         // MUST be committed
         _prefApp.edit().putBoolean(_context.getString(R.string.pref_key__first_start), value).commit();
+    }
+
+    /**
+     * When adding/removing fields make sure to update the
+     * {@link #getUsers()} and {@link #setUsers(ArrayList)} methods too.
+     */
+    public static class User{
+        public UserHandle handle;
+        public int color;
+
+        public User(UserHandle handle, int color) {
+            this.handle = handle;
+            this.color = color;
+        }
+    }
+
+    public User getUserByHandle(UserHandle handle){
+        for (User u : getUsers()) {
+            if(u.handle.equals(handle)) return u;
+        }
+        return null;
+    }
+
+    public ArrayList<User> getUsers(){
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP)
+            return new ArrayList<>();
+
+        // Get current users/profiles
+        List<UserHandle> handles = new ArrayList<>();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+            handles = launcherApps.getProfiles();
+        } else{
+            UserManager userManager = (UserManager) getContext().getSystemService(Context.USER_SERVICE);
+            handles = userManager.getUserProfiles();
+        }
+
+        ArrayList<User> userList = new ArrayList<>();
+
+        // Get saved users
+        for (String s : getStringList(R.string.pref_key__users)) {
+            String[] arr = s.split(",");
+            int handleNum = Integer.parseInt(arr[0]);
+            int color = Integer.parseInt(arr[1]);
+
+            UserHandle handle = null;
+            for (UserHandle h : handles) {
+                if(h.hashCode() == handleNum){
+                    handle = h;
+                    break;
+                }
+            }
+            // Prevent deleted users from getting added
+            if(handle == null) continue;
+
+            userList.add(new User(handle, color));
+        }
+
+        // Make sure new users get added with random color
+        for (UserHandle handle : handles) {
+            boolean alreadyExists = false;
+            for (User u : userList) {
+                if(u.handle.equals(handle)){
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if(alreadyExists) continue;
+            int color = Tool.rgb(new Random().nextFloat(), new Random().nextFloat(), new Random().nextFloat());
+            userList.add(new User(handle, color));
+        }
+
+        // Update the saved list
+        setUsers(userList);
+        return userList;
+    }
+
+    public void setUsers(ArrayList<User> users) {
+        ArrayList<String> l = new ArrayList<>();
+        for (User u : users) {
+            l.add(u.handle.hashCode()+","+u.color);
+        }
+        setStringList(R.string.pref_key__users, l);
     }
 }

@@ -72,6 +72,7 @@
     <string name="pref_title__behavior">Behavior</string>
     <string name="pref_title__advanced">Advanced</string>
     <string name="pref_title__hide_apps">Hide Apps</string>
+    <string name="pref_title__users">Users</string>
     <string name="pref_title__about">About</string>
 
     <string name="pref_title__size">Size</string>

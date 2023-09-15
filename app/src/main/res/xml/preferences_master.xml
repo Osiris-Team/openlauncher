@@ -52,6 +52,11 @@
             android:title="@string/pref_title__hide_apps" />
 
         <PreferenceScreen
+            android:icon="@drawable/ic_person"
+            android:key="@string/pref_key__cat_users"
+            android:title="@string/pref_title__users" />
+
+        <PreferenceScreen
             android:icon="@drawable/ic_info"
             android:key="@string/pref_key__cat_about"
             android:title="@string/pref_title__about" />

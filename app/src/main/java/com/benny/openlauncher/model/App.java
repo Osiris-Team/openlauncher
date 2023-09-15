@@ -9,6 +9,8 @@ import android.content.pm.ShortcutInfo;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 
+import com.benny.openlauncher.util.AppSettings;
+
 import java.util.List;
 
 public class App {
@@ -16,6 +18,7 @@ public class App {
     public String _label;
     public String _packageName;
     public String _className;
+    public AppSettings.User _user;
     public UserHandle _userHandle;
     public List<ShortcutInfo> _shortcutInfo;
     public boolean isOwnedByDefaultUser;

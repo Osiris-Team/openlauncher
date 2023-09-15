@@ -9,15 +9,11 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Process;
-import android.os.UserHandle;
-import android.os.UserManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
@@ -177,42 +173,23 @@ public class AppManager {
         protected Object doInBackground(Object[] p1) {
 
             // work profile support
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-                List<UserHandle> profiles = launcherApps.getProfiles();
-                UserHandle currentUser = Process.myUserHandle();
-                UserHandle defaultUser = profiles.get(0);
-                for (UserHandle userHandle : profiles) {
-                    List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
-                    for (LauncherActivityInfo info : apps) {
-                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
-                        App app = new App(_packageManager, info, shortcutInfo);
-                        app._userHandle = userHandle;
-                        app.isOwnedByDefaultUser = userHandle == defaultUser;
-                        modifyIconIfNeeded(app);
-                        LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
-                        nonFilteredAppsTemp.add(app);
-                    }
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                UserManager userManager = (UserManager) _context.getSystemService(Context.USER_SERVICE);
-                // LauncherApps.getProfiles() is not available for API 25, so just get all associated user profile handlers
-                List<UserHandle> profiles = userManager.getUserProfiles();
-                UserHandle currentUser = Process.myUserHandle();
-                UserHandle defaultUser = profiles.get(0);
-                LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-                for (UserHandle userHandle : profiles) {
-                    List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
-                    for (LauncherActivityInfo info : apps) {
-                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
-                        App app = new App(_packageManager, info, shortcutInfo);
-                        app._userHandle = userHandle;
-                        app.isOwnedByDefaultUser = userHandle == defaultUser;
-                        modifyIconIfNeeded(app);
-                        LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
-                        nonFilteredAppsTemp.add(app);
-                    }
-                }
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+               LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+               ArrayList<AppSettings.User> users = AppSettings.get().getUsers();
+               AppSettings.User defaultUser = users.get(0);
+               for (AppSettings.User user : users) {
+                   List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, user.handle);
+                   for (LauncherActivityInfo info : apps) {
+                       List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
+                       App app = new App(_packageManager, info, shortcutInfo);
+                       app._user = user;
+                       app._userHandle = user.handle;
+                       app.isOwnedByDefaultUser = user == defaultUser;
+                       modifyIconIfNeeded(app);
+                       LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
+                       nonFilteredAppsTemp.add(app);
+                   }
+               }
             } else {
                 Intent intent = new Intent(Intent.ACTION_MAIN, null);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -292,7 +269,7 @@ public class AppManager {
 
             // Draw circle
             Paint paint = new Paint();
-            paint.setColor(Color.RED);
+            paint.setColor(app._user.color);
             canvas.drawCircle((additionalDrawableLeft + additionalDrawableLeft / 2) - additionalDrawablePadding * 2,
                     (additionalDrawableTop + additionalDrawableTop / 2) - additionalDrawablePadding * 2,
                     additionalDrawableSize / 1.8f, paint);
