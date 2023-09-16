@@ -2,6 +2,7 @@ package com.benny.openlauncher.util;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -44,6 +45,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + COLUMN_DESKTOP + " INTEGER,"
                     + COLUMN_STATE + " INTEGER)";
 
+    public static final String USER_HANDLE_CODE = "userHandleCode";
+
     protected SQLiteDatabase _db;
     protected Context _context;
 
@@ -81,7 +84,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             case APP:
             case SHORTCUT:
                 Tool.saveIcon(_context, Tool.drawableToBitmap(item.getIcon()), Integer.toString(item.getId()));
-                itemValues.put(COLUMN_DATA, Tool.getIntentAsString(item.getIntent()));
+                itemValues.put(COLUMN_DATA,
+                        Tool.getIntentAsString(item.getIntent()) + " "+
+                        item.getIntent().getIntExtra(USER_HANDLE_CODE, 0));
                 break;
             case GROUP:
                 for (Item tmp : item.getItems()) {
@@ -218,7 +223,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             case APP:
             case SHORTCUT:
                 Tool.saveIcon(_context, Tool.drawableToBitmap(item.getIcon()), Integer.toString(item.getId()));
-                itemValues.put(COLUMN_DATA, Tool.getIntentAsString(item.getIntent()));
+                itemValues.put(COLUMN_DATA,
+                        Tool.getIntentAsString(item.getIntent()) +" "+
+                        item.getIntent().getIntExtra(USER_HANDLE_CODE, 0));
                 break;
             case GROUP:
                 for (Item tmp : item.getItems()) {
@@ -267,6 +274,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int x = Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_X_POS)));
         int y = Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_Y_POS)));
         String data = cursor.getString(cursor.getColumnIndex(COLUMN_DATA));
+        String[] dataSplitBySpaces = data.split(" ");
+        String intentURI = dataSplitBySpaces[0];
+        int userHandleCode;
+        try{
+            userHandleCode = Integer.parseInt(dataSplitBySpaces[1]);
+        } catch (Exception e) {
+            // Happens when data from older version, in that case the owner is set to 0
+            // which is the default user/profile handle code.
+            userHandleCode = 0;
+        }
 
         item.setId(id);
         item.setLabel(label);
@@ -275,16 +292,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         item.setType(type);
 
         String[] dataSplit;
+        Intent savedIntent = Tool.getIntentFromString(intentURI);
+        savedIntent.putExtra(USER_HANDLE_CODE, userHandleCode);
         switch (type) {
             case APP: {
-                item.setIntent(Tool.getIntentFromString(data));
+                item.setIntent(savedIntent);
                 item.setShortcutInfo(Tool.getShortcutInfo(_context, item.getIntent().getComponent().getPackageName()));
                 App app = Setup.get().getAppLoader().findItemApp(item);
                 item.setIcon(app != null ? app.getIcon() : null);
                 break;
             }
             case SHORTCUT: {
-                item.setIntent(Tool.getIntentFromString(data));
+                item.setIntent(savedIntent);
                 item.setIcon(Tool.getIcon(_context, Integer.toString(item.getId())));
                 if (item.getIcon() == null) {
                     App app = Setup.get().getAppLoader().findItemApp(item);

@@ -65,16 +65,24 @@ public class AppManager {
         _packageManager = context.getPackageManager();
     }
 
+    public App findItemApp(Item item) {
+        LOG.info(""+item._type);
+        return findApp(item.getIntent());
+    }
+
     public App findApp(Intent intent) {
         if (intent == null || intent.getComponent() == null) return null;
 
         String packageName = intent.getComponent().getPackageName();
         String className = intent.getComponent().getClassName();
+        int userHandle = intent.getIntExtra(DatabaseHelper.USER_HANDLE_CODE, 0);
         for (App app : _apps) {
-            if (app._className.equals(className) && app._packageName.equals(packageName)) {
+            if (app._className.equals(className) && app._packageName.equals(packageName)
+                    && app._userHandle.hashCode() == userHandle) {
                 return app;
             }
         }
+
         return null;
     }
 
@@ -101,10 +109,6 @@ public class AppManager {
 
     public List<App> getAllApps(Context context, boolean includeHidden) {
         return includeHidden ? getNonFilteredApps() : getApps();
-    }
-
-    public App findItemApp(Item item) {
-        return findApp(item.getIntent());
     }
 
     public App createApp(Intent intent) {

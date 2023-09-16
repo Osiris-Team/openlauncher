@@ -249,6 +249,7 @@ public class Tool {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setClassName(app.getPackageName(), app.getClassName());
+        intent.putExtra(DatabaseHelper.USER_HANDLE_CODE, app._userHandle.hashCode());
         return intent;
     }
 
