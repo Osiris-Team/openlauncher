@@ -170,7 +170,7 @@ public class Tool {
             launcher.onStartApp(context, app, view);
         }
         else {
-            Toast.makeText(context, "Switch to "+ currentUser.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Switch to "+ app._userHandle.toString()+", to launch this app.", Toast.LENGTH_LONG).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 // Prompt user to switch profile
                 UserManager userManager = (UserManager) getSystemService(context, UserManager.class);
