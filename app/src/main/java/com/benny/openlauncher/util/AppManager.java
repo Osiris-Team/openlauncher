@@ -66,7 +66,6 @@ public class AppManager {
     }
 
     public App findItemApp(Item item) {
-        LOG.info(""+item._type);
         return findApp(item.getIntent());
     }
 

@@ -1,9 +1,11 @@
 package com.benny.openlauncher.model;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 import com.benny.openlauncher.util.Definitions;
 import com.benny.openlauncher.util.Definitions.ItemPosition;
@@ -23,7 +25,11 @@ public class Item {
     public int _x = 0;
     public int _y = 0;
 
-    // intent for shortcuts and apps
+    /**
+     * Intent for shortcuts and apps. <br>
+     * Do not use directly to launch the app, use
+     * {@link Tool#startApp(Context, App, View)} (or similar method) instead.
+     */
     public Intent _intent;
 
     // list of shortcutInfo for shortcuts
@@ -119,6 +125,10 @@ public class Item {
         _id = id;
     }
 
+    /**
+     * Do not use directly to launch the app, use
+     * {@link Tool#startApp(Context, App, View)} (or similar method) instead.
+     */
     public Intent getIntent() {
         return _intent;
     }

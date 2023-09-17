@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
+import com.benny.openlauncher.model.Item;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -161,6 +162,14 @@ public class Tool {
 
     public static float clampFloat(float target, float min, float max) {
         return Math.max(min, Math.min(max, target));
+    }
+
+    public static void startApp(Context context, Item appItem, View view) {
+        startApp(context, appItem._intent, view);
+    }
+
+    public static void startApp(Context context, Intent appIntent, View view) {
+        startApp(context, AppManager.getInstance(context).findApp(appIntent), view);
     }
 
     public static void startApp(Context context, App app, View view) {

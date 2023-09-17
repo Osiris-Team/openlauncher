@@ -158,7 +158,7 @@ public class GroupPopupView extends RevealFrameLayout {
                                 public void run() {
                                     collapse();
                                     setVisibility(View.INVISIBLE);
-                                    view.getContext().startActivity(groupItem.getIntent());
+                                    Tool.startApp(view.getContext(), groupItem, view);
                                 }
                             });
                         }

@@ -319,7 +319,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     Item groupItem = getItem(Integer.parseInt(string));
                     if (groupItem != null) {
                         item.getItems().add(groupItem);
+                        Log.i("A", "Item in group: " +groupItem._label+
+                                " user-handle: "+ groupItem._intent.getIntExtra(USER_HANDLE_CODE, 0));
                     }
+
                 }
                 break;
             }
