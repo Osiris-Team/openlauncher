@@ -174,23 +174,17 @@ public class Tool {
 
     public static void startApp(Context context, App app, View view) {
         UserHandle currentUser = Process.myUserHandle();
-        if(app._userHandle == currentUser){
-            HomeActivity launcher = HomeActivity.Companion.getLauncher();
-            launcher.onStartApp(context, app, view);
-        }
-        else {
+        if(app._userHandle != currentUser && Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
+            // Prompt user to switch profile by opening users in settings
             Toast.makeText(context, "Switch to "+ app._userHandle.toString()+", to launch this app.", Toast.LENGTH_LONG).show();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                // Prompt user to switch profile
-                UserManager userManager = (UserManager) getSystemService(context, UserManager.class);
-                userManager.requestQuietModeEnabled(false, app._userHandle);
-            }
-            else{
-                // Prompt user to switch profile by opening users in settings
-                Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                context.startActivity(intent);
-            }
+            Intent intent = new Intent(Settings.ACTION_SETTINGS);
+            context.startActivity(intent);
+            return;
         }
+        // Otherwise simply launch the app and hope that the work profile
+        // starts it with the correct user / work profile.
+        HomeActivity launcher = HomeActivity.Companion.getLauncher();
+        launcher.onStartApp(context, app, view);
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
