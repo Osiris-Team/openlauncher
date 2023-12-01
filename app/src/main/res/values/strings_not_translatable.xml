@@ -29,12 +29,14 @@
     <string name="pref_key__desktop_show_label" translatable="false">pref_key__desktop_show_label</string>
     <string name="pref_key__search_bar_enable" translatable="false">pref_key__search_bar_enable</string>
     <string name="pref_key__search_button_enable" translatable="false">pref_key__search_button_enable</string>
+    <string name="pref_key__search_button_alignment" translatable="false">pref_key__search_button_alignment</string>
     <string name="pref_key__date_bar_enable" translatable="false">pref_key__date_bar_enable</string>
     <string name="pref_key__search_bar_starts_with" translatable="false">pref_key__search_bar_starts_with</string>
     <string name="pref_key__search_bar_base_uri" translatable="false">pref_key__search_bar_base_uri</string>
     <string name="pref_key__search_bar_force_browser" translatable="false">pref_key__search_bar_force_browser</string>
     <string name="pref_key__search_bar_show_hidden_apps" translatable="false">pref_key__search_bar_show_hidden_apps</string>
     <string name="pref_key__date_bar_date_format_type" translatable="false">pref_key__date_bar_date_format_type</string>
+    <string name="pref_key__date_bar_alignment" translatable="false">pref_key__date_bar_alignment</string>
     <string name="pref_key__date_bar_date_format_custom_1" translatable="false">pref_key__date_bar_date_format_custom_1</string>
     <string name="pref_key__date_bar_date_format_custom_2" translatable="false">pref_key__date_bar_date_format_custom_2</string>
     <string name="pref_key__date_bar_date_text_color" translatable="false">pref_key__date_bar_date_text_color</string>

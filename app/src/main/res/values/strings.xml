@@ -122,6 +122,7 @@
     <string name="pref_title__date_bar">Date Bar</string>
     <string name="pref_title__date_bar_text_color">Text Color</string>
     <string name="pref_title__date_bar_date_format">Date Format</string>
+    <string name="pref_title__alignment">Alignment</string>
     <string name="pref_title__date_bar_date_format_custom_1">Custom Format: Line 1</string>
     <string name="pref_title__date_bar_date_format_custom_2">Custom Format: Line 2</string>
 

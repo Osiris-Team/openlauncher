@@ -52,6 +52,12 @@
         <item>@string/black</item>
     </string-array>
 
+    <string-array name="entries__alignment" translatable="false">
+        <item>Start</item>
+        <item>Center</item>
+        <item>End</item>
+    </string-array>
+
     <string-array name="entries__date_format" translatable="false">
         <item>@string/custom</item>
         <item>February 17\nSaturday, 2018</item>

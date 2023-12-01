@@ -105,13 +105,14 @@ public class SearchBar extends FrameLayout {
         return !_expanded;
     }
 
+    int dp1 = Tool.dp2px(1);
+    int iconMarginOutside = dp1 * 16;
+    int iconMarginTop = dp1 * 14;
+    int searchTextMarginTop = dp1 * 4;
+    int iconSize = dp1 * 24;
+    int iconPadding = dp1 * 6;
+
     private void init() {
-        int dp1 = Tool.dp2px(1);
-        int iconMarginOutside = dp1 * 16;
-        int iconMarginTop = dp1 * 14;
-        int searchTextMarginTop = dp1 * 4;
-        int iconSize = dp1 * 24;
-        int iconPadding = dp1 * 6;
 
         // These have to match the Preferences Array, but without item 0 as that is a custom option which can be changed:
         //   <item>@string/custom</item>
@@ -365,6 +366,18 @@ public class SearchBar extends FrameLayout {
         if (_searchClock != null) {
             _searchClock.setTextColor(appSettings.getDesktopDateTextColor());
         }
+
+        LayoutParams buttonParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        buttonParams.setMargins(0, iconMarginTop, iconMarginOutside, 0);
+        int align = appSettings.getSearchButtonAlignment();
+        buttonParams.gravity = align == 0 ? Gravity.START : align == 1 ? Gravity.CENTER : Gravity.END;
+        _searchButton.setLayoutParams(buttonParams);
+
+        LayoutParams clockParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        clockParams.setMargins(iconMarginOutside, dp1 * 4, 0, dp1 * 4);
+        align = appSettings.getDateBarAlignment();
+        clockParams.gravity = align == 0 ? Gravity.START : align == 1 ? Gravity.CENTER : Gravity.END;
+        _searchClock.setLayoutParams(clockParams);
 
         ZonedDateTime now = ZonedDateTime.now();
         _clockFormatter = getSearchBarClockFormat(Setup.appSettings().getDesktopDateMode());

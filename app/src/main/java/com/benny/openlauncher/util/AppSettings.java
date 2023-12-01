@@ -82,8 +82,16 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getBool(R.string.pref_key__search_button_enable, true);
     }
 
+    public int getSearchButtonAlignment() {
+        return getIntOfStringPref(R.string.pref_key__search_button_alignment, 2);
+    }
+
     public boolean getDateBarEnable() {
         return getBool(R.string.pref_key__date_bar_enable, true);
+    }
+
+    public int getDateBarAlignment() {
+        return getIntOfStringPref(R.string.pref_key__date_bar_alignment, 0);
     }
 
     public boolean getSearchBarStartsWith() {

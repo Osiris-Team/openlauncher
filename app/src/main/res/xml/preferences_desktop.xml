@@ -122,6 +122,13 @@
             android:summary="@string/pref_summary__search_button_enable"
             android:title="@string/pref_title__search_button_enable" />
 
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/entries__alignment"
+            android:entryValues="@array/values__zero_to_two"
+            android:key="@string/pref_key__search_button_alignment"
+            android:title="@string/pref_title__alignment" />
+
         <EditTextPreference
             android:defaultValue="@string/pref_default__search_bar_base_uri"
             android:dependency="@string/pref_key__search_bar_enable"
@@ -161,6 +168,13 @@
             android:key="@string/pref_key__date_bar_enable"
             android:summary="@string/pref_summary__date_bar_enable"
             android:title="@string/pref_title__date_bar_enable" />
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/entries__alignment"
+            android:entryValues="@array/values__zero_to_two"
+            android:key="@string/pref_key__date_bar_alignment"
+            android:title="@string/pref_title__alignment" />
 
         <com.flask.colorpicker.ColorPickerPreference
             android:defaultValue="@color/white"
