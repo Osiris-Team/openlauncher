@@ -75,7 +75,7 @@ public class AppManager {
         String packageName = intent.getComponent().getPackageName();
         String className = intent.getComponent().getClassName();
         int userHandle = intent.getIntExtra(DatabaseHelper.USER_HANDLE_CODE, 0);
-        for (App app : _apps) {
+        for (App app : _nonFilteredApps) {
             if (app._className.equals(className) && app._packageName.equals(packageName)
                     && app._userHandle.hashCode() == userHandle) {
                 return app;
