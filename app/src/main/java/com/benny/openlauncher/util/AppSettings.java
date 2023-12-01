@@ -78,6 +78,14 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
         return getBool(R.string.pref_key__search_bar_enable, true);
     }
 
+    public boolean getSearchButtonEnable() {
+        return getBool(R.string.pref_key__search_button_enable, true);
+    }
+
+    public boolean getDateBarEnable() {
+        return getBool(R.string.pref_key__date_bar_enable, true);
+    }
+
     public boolean getSearchBarStartsWith() {
         return getBool(R.string.pref_key__search_bar_starts_with, true);
     }

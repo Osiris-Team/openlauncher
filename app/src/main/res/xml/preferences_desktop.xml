@@ -116,6 +116,12 @@
             android:summary="@string/pref_summary__search_bar_enable"
             android:title="@string/pref_title__search_bar_enable" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__search_button_enable"
+            android:summary="@string/pref_summary__search_button_enable"
+            android:title="@string/pref_title__search_button_enable" />
+
         <EditTextPreference
             android:defaultValue="@string/pref_default__search_bar_base_uri"
             android:dependency="@string/pref_key__search_bar_enable"
@@ -149,6 +155,12 @@
     </com.benny.openlauncher.widget.ColorPreferenceCategory>
 
     <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/pref_title__date_bar">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key__date_bar_enable"
+            android:summary="@string/pref_summary__date_bar_enable"
+            android:title="@string/pref_title__date_bar_enable" />
 
         <com.flask.colorpicker.ColorPickerPreference
             android:defaultValue="@color/white"

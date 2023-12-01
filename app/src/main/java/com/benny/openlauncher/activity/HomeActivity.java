@@ -442,14 +442,28 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     public final void updateSearchBar(boolean show) {
         AppSettings appSettings = Setup.appSettings();
+        SearchBar searchBar = getSearchBar();
         if (appSettings.getSearchBarEnable() && show) {
-            Tool.visibleViews(100, getSearchBar());
+
+            Tool.visibleViews(100, searchBar);
+
+            if(appSettings.getSearchButtonEnable()) Tool.visibleViews(100, searchBar._searchButton);
+            else Tool.invisibleViews(100, searchBar._searchButton);
+
+            if(appSettings.getDateBarEnable()) Tool.visibleViews(100, searchBar._searchClock);
+            else Tool.invisibleViews(100, searchBar._searchClock);
+
         } else {
-            if (appSettings.getSearchBarEnable()) {
-                Tool.invisibleViews(100, getSearchBar());
-            } else {
-                Tool.goneViews(100, getSearchBar());
-            }
+
+            if (appSettings.getSearchBarEnable()) Tool.invisibleViews(100, searchBar);
+            else Tool.goneViews(100, searchBar);
+
+            if (appSettings.getSearchButtonEnable()) Tool.invisibleViews(100, searchBar._searchButton);
+            else Tool.goneViews(100, searchBar._searchButton);
+
+            if (appSettings.getDateBarEnable()) Tool.invisibleViews(100, searchBar._searchClock);
+            else Tool.goneViews(100, searchBar._searchClock);
+
         }
     }
 

@@ -104,6 +104,10 @@
 
     <string name="pref_title__search_bar_enable">Search Bar</string>
     <string name="pref_summary__search_bar_enable">Display a search bar above the desktop.</string>
+    <string name="pref_title__search_button_enable">Search Button</string>
+    <string name="pref_summary__search_button_enable">Display a search button in the search bar.</string>
+    <string name="pref_title__date_bar_enable">Date Bar</string>
+    <string name="pref_summary__date_bar_enable">Display the date in the search bar.</string>
     <string name="pref_title__search_bar_starts_with">Search apps by name</string>
     <string name="pref_summary__search_bar_starts_with">Search for apps starting with the search text.</string>
     <string name="pref_title__search_bar_base_uri">Search URI</string>
